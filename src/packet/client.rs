@@ -1,3 +1,5 @@
+use std::io::{Read, Result};
+
 use bytes::{Buf, BytesMut};
 
 use crate::logic::table::{Card, Suit};
@@ -71,6 +73,28 @@ impl ClientHandshakePacket {
 
         Some(ClientHandshakePacket { num_names, names })
     }
+
+    pub fn get_client_handshake_packet<R: Read>(reader: &mut R) -> Result<ClientHandshakePacket> {
+        let mut num_names_buf = [0];
+        reader.read_exact(&mut num_names_buf)?;
+        let num_names = num_names_buf[0];
+
+        let mut names = Vec::new();
+
+        for _ in 0..num_names {
+            let mut name_length_buf = [0];
+            reader.read_exact(&mut name_length_buf)?;
+            let name_length = name_length_buf[0] as usize;
+
+            let mut name_buf = vec![0; name_length];
+            reader.read_exact(&mut name_buf)?;
+
+            let name = String::from_utf8_lossy(&name_buf).to_string();
+            names.push(name);
+        }
+
+        Ok(ClientHandshakePacket { num_names, names })
+    }
 }
 
 #[cfg(test)]
@@ -135,5 +159,21 @@ mod tests {
         let result = ClientHandshakePacket::from_bytes(&raw).unwrap();
 
         assert_eq!(packet, result);
+    }
+
+    #[test]
+    fn test_get_client_handshake_packet() {
+        let data: Vec<u8> = vec![
+            0x02, 0x05, 0x41, 0x6C, 0x69, 0x63, 0x65, 0x03, 0x42, 0x6F, 0x62,
+        ];
+        let expected = ClientHandshakePacket {
+            num_names: 2,
+            names: vec![String::from("Alice"), String::from("Bob")],
+        };
+
+        let mut reader = &data[..];
+        let result = ClientHandshakePacket::get_client_handshake_packet(&mut reader).unwrap();
+
+        assert_eq!(expected, result);
     }
 }
