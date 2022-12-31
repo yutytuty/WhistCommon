@@ -1,4 +1,3 @@
-use crate::logic::error::LogicError;
 use crate::logic::table::{Card, Deck, Table};
 
 #[derive(Debug, Hash, Eq, PartialEq, Clone)]
@@ -39,8 +38,6 @@ impl Player {
 
 #[cfg(test)]
 pub mod tests {
-    use std::collections::HashMap;
-
     use lazy_static::lazy_static;
 
     use crate::logic::table::Suit;

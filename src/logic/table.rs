@@ -1,13 +1,10 @@
-use std::borrow::Borrow;
 use std::collections::HashMap;
-use std::ops::Deref;
 
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
-use crate::logic::error::LogicError;
 use crate::logic::player::Player;
 
 #[derive(EnumIter, Copy, Clone, Debug, Hash, PartialEq, Eq)]
@@ -26,7 +23,7 @@ impl Suit {
             Suit::Diamonds => "Diamonds",
             Suit::Clubs => "Clubs",
         }
-            .to_string()
+        .to_string()
     }
 
     pub fn to_be_bytes(&self) -> [u8; 1] {
@@ -164,7 +161,7 @@ mod tests {
 
     #[test]
     fn test_strongest_card_holder() {
-        let mut players = [
+        let players = [
             TEST_PLAYER_1.clone(),
             TEST_PLAYER_2.clone(),
             TEST_PLAYER_3.clone(),
