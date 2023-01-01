@@ -80,28 +80,6 @@ impl ServerHandshakePacket {
 
         Some(ServerHandshakePacket { num_names, names })
     }
-
-    pub fn get_client_handshake_packet<R: Read>(reader: &mut R) -> Result<ServerHandshakePacket> {
-        let mut num_names_buf = [0];
-        reader.read_exact(&mut num_names_buf)?;
-        let num_names = num_names_buf[0];
-
-        let mut names = Vec::new();
-
-        for _ in 0..num_names {
-            let mut name_length_buf = [0];
-            reader.read_exact(&mut name_length_buf)?;
-            let name_length = name_length_buf[0] as usize;
-
-            let mut name_buf = vec![0; name_length];
-            reader.read_exact(&mut name_buf)?;
-
-            let name = String::from_utf8_lossy(&name_buf).to_string();
-            names.push(name);
-        }
-
-        Ok(ServerHandshakePacket { num_names, names })
-    }
 }
 
 #[cfg(test)]
