@@ -31,7 +31,7 @@ impl ClientPacket {
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct ClientHandshakePacket {
-    name: String,
+    pub name: String,
 }
 
 impl ClientHandshakePacket {
